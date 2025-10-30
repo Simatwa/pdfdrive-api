@@ -41,11 +41,10 @@ class BasePage:
     def __set_nav_basepage(
         self, target_page_path: str, current_page_identity: Literal["last", "first"]
     ) -> BasePage:
-
         if not target_page_path:
             raise NavigationError(
-            f"You have reached the {current_page_identity} page of the search"
-        )
+                f"You have reached the {current_page_identity} page of the search"
+            )
 
         next_base = deepcopy(self)
 
@@ -55,8 +54,8 @@ class BasePage:
 
         if "/page/" in current_url:
             new_url = (
-                current_url[:-2 if current_url.endswith('/') else -1] 
-                + target_page_path[-2 if target_page_path.endswith('/') else -1]
+                current_url[: -2 if current_url.endswith("/") else -1]
+                + target_page_path[-2 if target_page_path.endswith("/") else -1]
             )
 
         else:
@@ -70,16 +69,12 @@ class BasePage:
     async def next_page(self, current_page: ContentPageModel) -> BasePage:
         next_page_path = current_page.next_page_path()
 
-        return self.__set_nav_basepage(
-            next_page_path, "last"
-        )
+        return self.__set_nav_basepage(next_page_path, "last")
 
     async def previous_page(self, current_page: ContentPageModel) -> BasePage:
         next_page_path = current_page.next_page_path()
 
-        return self.__set_nav_basepage(
-            next_page_path, "first"
-        )
+        return self.__set_nav_basepage(next_page_path, "first")
 
 
 class Homepage(BasePage):
@@ -94,13 +89,11 @@ class SearchPage(BasePage):
         self.query = query
 
     def get_requests_params(self):
-        return {
-            "s": self.query
-        }
+        return {"s": self.query}
 
 
 class CategoryPage(BasePage):
-
     def __init__(self, name: str, session: Session = Session()):
         super().__init__(session)
-        self.url = name.lower().replace(" ", "-")
+        name_slug = name.lower().replace(" ", "-")
+        self.url = f"/category/{name_slug}"
