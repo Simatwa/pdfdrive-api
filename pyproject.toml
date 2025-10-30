@@ -1,0 +1,41 @@
+[project]
+name = "pdfdrive-api"
+version = "0.1.0"
+description = "Search and download ebooks from pdfdrive.com.co "
+readme = "README.md"
+authors = [
+    { name = "smartwa", email = "smartwacaleb@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "bs4>=0.0.2",
+    "httpx>=0.28.1",
+    "pydantic>=2.12.3",
+]
+
+[project.scripts]
+pdfdrive-api = "pdfdrive_api:main"
+
+[build-system]
+requires = ["uv_build>=0.8.15,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 85
+
+[tool.ruff.lint]
+select = [
+    "E",      # https://docs.astral.sh/ruff/rules/#error-e
+    "F",      # https://docs.astral.sh/ruff/rules/#pyflakes-f
+    "I",      # https://docs.astral.sh/ruff/rules/#isort-i
+    "FA",     # https://docs.astral.sh/ruff/rules/#flake8-future-annotations-fa
+    "UP",     # https://docs.astral.sh/ruff/rules/#pyupgrade-up
+    "RUF100", # https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
+]
+ignore = [
+    "UP031",  # https://docs.astral.sh/ruff/rules/printf-string-formatting/
+    "F401"    # https://docs.astral.sh/ruff/rules/unused-import
+]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
