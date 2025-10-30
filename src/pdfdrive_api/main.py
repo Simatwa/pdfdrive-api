@@ -97,3 +97,12 @@ class CategoryPage(BasePage):
         super().__init__(session)
         name_slug = name.lower().replace(" ", "-")
         self.url = f"/category/{name_slug}"
+
+
+class URLPage(BasePage):
+    def __init__(self, url: str, session: Session = Session()):
+        self.url = url
+        super().__init__(session)
+
+
+class TagPage(URLPage): ...

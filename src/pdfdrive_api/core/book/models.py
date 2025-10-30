@@ -32,12 +32,17 @@ class RecommendedBook(BaseModel):
     url: HttpUrl
 
 
+class BookTag(BaseModel):
+    name: str
+    url: HttpUrl
+
+
 class BookPageModel(BaseModel):
     page_metadata: PageMetadataModel
     book: BookPanelModel
     about: BookAboutModel
     metadata: MetadataModel
-    tags: list[str]
+    tags: list[BookTag]
     related: list[RelatedBook]
     recommended: list[RecommendedBook]
 
