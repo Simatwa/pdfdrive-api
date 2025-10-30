@@ -1,9 +1,9 @@
 from copy import deepcopy
 from typing import Literal
 
-from pdfdrive_api.core import PageListingExtractor
+from pdfdrive_api.core.finder.extractor import PageListingExtractor
+from pdfdrive_api.core.finder.models import ContentPageModel
 from pdfdrive_api.exceptions import NavigationError
-from pdfdrive_api.models import ContentPageModel
 from pdfdrive_api.requests import Session
 
 

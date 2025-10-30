@@ -1,4 +1,4 @@
-from pdfdrive_api.models import (
+from pdfdrive_api.core.finder.models import (
     BookPanelModel,
     BooksCategoryModel,
     BooksGroupModel,
@@ -87,10 +87,9 @@ class ExtractorUtils(BooksListing):
         head: HtmlSoup = self.get_page_head(self.page_content)
         title = head.find("title").get_text(strip=True)
 
-        url = head.find("meta", dict(property="og:url")).get_text(strip=True)
-        description = head.find("meta", dict(name="description")).get_text(
-            strip=True
-        )
+        url = head.find("meta", dict(property="og:url")).get("content")
+        image = head.find("meta", dict(property="og:image")).get("content")
+        description = head.find("meta", dict(name="description")).get("content")
         next = "https:" + head.find("meta", dict(rel="next")).get_text(strip=True)
         schema = head.find("script", dict(type="application/ld+json")).get_text(
             strip=True
@@ -99,6 +98,7 @@ class ExtractorUtils(BooksListing):
         metadata = PageMetadataModel(
             page_url=url,
             page_title=title,
+            page_image=image,
             page_description=description,
             page_next=next,
             page_schema=schema,
