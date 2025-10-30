@@ -1,6 +1,6 @@
 import httpx
 
-from pdfdrive_api.constants import REQUEST_HEADERS, BASE_URL
+from pdfdrive_api.constants import BASE_URL, REQUEST_HEADERS
 
 
 class Session:

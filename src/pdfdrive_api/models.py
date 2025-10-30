@@ -40,11 +40,36 @@ class BooksCategoryModel(BaseModel):
     url: HttpUrl
 
 
-class HomepageModel(BaseModel):
+class ContentPageModel(BaseModel):
     about: str
     sub_about: str
     books_category: list[BooksCategoryModel]
     search_placeholder: str
-    page_books: CurrentPageBooksModel
+    books: CurrentPageBooksModel
     other_books: list[BooksGroupModel]
     metadata: PageMetadataModel
+
+    def get_page_path(page_number: int) -> str:
+        return f"/page/{page_number}"
+
+    @property
+    def has_next_page(self) -> bool:
+        return self.books.current_page < self.books.total_pages
+
+    @property
+    def has_previous_page(self) -> bool:
+        return self.books.current_page > 1
+
+    @property
+    def previous_page_path(self) -> str | None:
+        if self.has_previous_page:
+            return self.get_page_path(self.books.current_page - 1)
+
+    @property
+    def next_page_path(self) -> str | None:
+        if self.has_next_page:
+            return self.get_page_path(self.books.current_page + 1)
+
+    @property
+    def last_page_path(self) -> str:
+        return self.get_page_path(self.books.total_pages)
