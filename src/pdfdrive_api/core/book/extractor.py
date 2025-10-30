@@ -130,17 +130,11 @@ class BookDetailsExtractor:
         recommended_items = []
 
         for recommendation in recommended_soup.find_all("a"):
-
             link = recommendation.find("a")
             title = link.get_text(strip=True)
             url = link.get("href")
 
-            recommended_items.append(
-                RecommendedBook(
-                    title=title,
-                    url=url
-                )
-            )
+            recommended_items.append(RecommendedBook(title=title, url=url))
 
         return recommended_items
 
@@ -152,5 +146,5 @@ class BookDetailsExtractor:
             metadata=self.extract_metadata(),
             tags=self.extract_tags(),
             related=self.extract_related(),
-            recommended=self.extract_recommended()
+            recommended=self.extract_recommended(),
         )

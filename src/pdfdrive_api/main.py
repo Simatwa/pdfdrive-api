@@ -1,6 +1,8 @@
 from copy import deepcopy
 from typing import Literal
 
+from pdfdrive_api.core.book.extractor import BookDetailsExtractor
+from pdfdrive_api.core.book.models import BookPageModel
 from pdfdrive_api.core.finder.extractor import PageListingExtractor
 from pdfdrive_api.core.finder.models import ContentPageModel
 from pdfdrive_api.exceptions import NavigationError
@@ -106,3 +108,24 @@ class URLPage(BasePage):
 
 
 class TagPage(URLPage): ...
+
+
+class BookPage:
+    """Specific book page details"""
+
+    def __init__(self, url: str, session: Session = Session()):
+        self.url = url
+        self.session = session
+        self.extractor: BookDetailsExtractor = None
+
+    async def get_page_contents(self) -> str:
+        resp = await self.session.get(self.url)
+
+        page_content = resp.text
+        self.extractor = BookDetailsExtractor(page_content)
+
+        return page_content
+
+    async def get_content(self) -> BookPageModel:
+        await self.get_page_contents()
+        return self.extractor.extract_page_content()
