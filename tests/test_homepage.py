@@ -2,9 +2,7 @@ from pdfdrive_api.core.finder.extractor import PageListingExtractor
 from pdfdrive_api.core.finder.models import ContentPageModel
 from tests import index_path_content
 
-extractor = PageListingExtractor(
-    index_path_content
-)
+extractor = PageListingExtractor(index_path_content)
 
 # TODO: Add tests for other extractor methods
 

@@ -38,8 +38,8 @@ class BookDetailsExtractor:
         rate = (
             self.page_content.find("span", {"class": "stars"})
             .get("style")
-            .split(":")[:-1]
-        )
+            .split(":")[1]
+        )[:-1]
 
         return BookPanelModel(
             title=title,
@@ -49,7 +49,7 @@ class BookDetailsExtractor:
         )
 
     def extract_about(self) -> BookAboutModel:
-        main = self.page_content.find("div", {"id": "main-site"})
+        main = self.page_content.find("main", {"id": "main-site"})
         table_of_contents_soup = main.find("div", dict(id="rank-math-toc"))
         description = main.find("div", {"class": "entry-limit"}).get_text(strip=True)
         table_of_content_items = [
@@ -112,8 +112,8 @@ class BookDetailsExtractor:
             rate = (
                 related_soup.find("span", {"class": "stars"})
                 .get("style")
-                .split(":")[:-1]
-            )
+                .split(":")[1]
+            )[:-1]
             image = related_soup.find("img").get("src")
 
             related_items.append(
@@ -129,8 +129,7 @@ class BookDetailsExtractor:
 
         recommended_items = []
 
-        for recommendation in recommended_soup.find_all("a"):
-            link = recommendation.find("a")
+        for link in recommended_soup.find_all("a"):
             title = link.get_text(strip=True)
             url = link.get("href")
 

@@ -5,9 +5,7 @@ from pdfdrive_api.core.book.models import (
 )
 from tests import book_path_content
 
-extractor = BookDetailsExtractor(
-    book_path_content
-)
+extractor = BookDetailsExtractor(book_path_content)
 
 
 def test_page_metadata_extraction():

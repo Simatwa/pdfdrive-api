@@ -6,9 +6,9 @@ from pydantic import BaseModel, HttpUrl, field_validator
 class PageMetadataModel(BaseModel):
     page_url: HttpUrl
     page_title: str
-    page_image: HttpUrl
+    page_image: HttpUrl | None
     page_description: str
-    page_next: HttpUrl  # | None = None
+    page_next: HttpUrl | None = None
     page_schema: dict  # | None = None
 
     @field_validator("page_schema", mode="before")

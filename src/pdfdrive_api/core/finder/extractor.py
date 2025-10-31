@@ -23,17 +23,25 @@ class BooksListing:
             .find("div", {"class": "sections"})
         )
 
-        sections = books_sections.find_all("div", {"class": "section"})
+        section_items = []
 
-        if current_page:
-            return sections[0]
+        for section in books_sections.find_all("div", {"class": "section"}):
+            if section.find("div", {"class": "pagination-wrap"}):
 
-        return sections
+                if current_page:
+                    return section
+    
+            if not current_page and bool(section):
+                section_items.append(section)
+
+        return section_items
 
     def extract_books_section_details(
         self, section: HtmlSoup, current_page: bool = False
     ) -> BooksGroupModel | CurrentPageBooksModel:
+
         name = section.find("div", {"class": "title-section"}).get_text(strip=True)
+
         book_items = []
 
         for book_panel in section.find_all("div", {"class": "bav bav1"}):
@@ -41,12 +49,14 @@ class BooksListing:
 
             title = link.get_text(strip=True)
             url = link.get("href")
+
             cover_image = "https:" + book_panel.find("img").get("data-lazy-src")
+            
             rate = (
                 book_panel.find("span", {"class": "stars"})
                 .get("style")
-                .split(":")[:-1]
-            )
+                .split(":")[1]
+            )[:-1]
 
             book = BookPanelModel(
                 title=title, cover_image=cover_image, rate=int(rate), url=url
@@ -54,10 +64,11 @@ class BooksListing:
             book_items.append(book)
 
         if current_page:
-            page_navs = section.find_all("ul", {"class": "pagination"})
+            page_navs = section.find("ul", {"class": "pagination"}).find_all("li")
             last_page_nav = page_navs[-1]
 
             if "next" in last_page_nav.get_text(strip=True).lower():
+                # print(len(page_navs))
                 current_page_nav = page_navs[0]
                 total_page_nav = page_navs[-2]
 
@@ -84,13 +95,24 @@ class ExtractorUtils(BooksListing):
         return self.page_content.find("head")
 
     def extract_page_metadata(self) -> PageMetadataModel:
-        head: HtmlSoup = self.get_page_head(self.page_content)
+        head: HtmlSoup = self.get_page_head()
         title = head.find("title").get_text(strip=True)
 
         url = head.find("meta", dict(property="og:url")).get("content")
-        image = head.find("meta", dict(property="og:image")).get("content")
+        image_soup = head.find("meta", dict(property="og:image"))
+
+        image = None
+
+        if image_soup:
+            image = image_soup.get("content")
+
         description = head.find("meta", dict(name="description")).get("content")
-        next = "https:" + head.find("meta", dict(rel="next")).get_text(strip=True)
+        next_soup = head.find("meta", dict(rel="next"))
+        next = None
+
+        if next_soup:
+            next = "https:" + next_soup.get("content")
+
         schema = head.find("script", dict(type="application/ld+json")).get_text(
             strip=True
         )
@@ -118,7 +140,7 @@ class ExtractorUtils(BooksListing):
             link = category.find("a")
 
             books_category = BooksCategoryModel(
-                name=link.get_text(strip=True), url=link.get("url")
+                name=link.get_text(strip=True), url=link.get("href")
             )
 
             books_category_items.append(books_category)
@@ -151,7 +173,7 @@ class PageListingExtractor(ExtractorUtils):
         self,
     ) -> CurrentPageBooksModel:
         current_page_books_section = self.get_books_sections(
-            self.page_content, current_page=True
+            current_page=True
         )
         return self.extract_books_section_details(
             current_page_books_section, current_page=True
@@ -164,19 +186,28 @@ class PageListingExtractor(ExtractorUtils):
         books_group_items = []
 
         for section in sections:
-            group_model = self.extract_books_section_details(section)
-            books_group_items.append(group_model)
+            try:
+                group_model = self.extract_books_section_details(section)
+                books_group_items.append(group_model)
+
+            except Exception as e:
+                raise
+                print(
+                "Error", 
+                )
+
+        print(len(books_group_items))
 
         return books_group_items
 
     def extract_page_content(self) -> ContentPageModel:
-        page_metadata = self.extract_page_metadata(self.page_content)
-        books_category = self.extract_books_categories(self.page_content)
-        about, sub_about = self.get_page_about(self.page_content)
+        page_metadata = self.extract_page_metadata()
+        books_category = self.extract_books_categories()
+        about, sub_about = self.get_page_about()
 
-        search_placeholder = self.get_book_search_placeholder(self.page_content)
-        current_page_books = self.current_page_books(self.page_content)
-        other_books = self.other_books(self.page_content)
+        search_placeholder = self.get_book_search_placeholder()
+        current_page_books = self.current_page_books()
+        other_books = self.other_books()
 
         return ContentPageModel(
             about=about,

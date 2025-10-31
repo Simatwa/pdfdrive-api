@@ -39,3 +39,8 @@ ignore = [
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]
