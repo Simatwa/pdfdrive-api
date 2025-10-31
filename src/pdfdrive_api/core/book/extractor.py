@@ -4,8 +4,8 @@ from pdfdrive_api.core.book.constants import name_short_map
 from pdfdrive_api.core.book.models import (
     BookAboutModel,
     BookPageModel,
-    DownloadBookPanelModel,
     BookTag,
+    DownloadBookPanelModel,
     MetadataModel,
     PageMetadataModel,
     RecommendedBook,

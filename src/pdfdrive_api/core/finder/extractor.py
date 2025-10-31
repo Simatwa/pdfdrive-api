@@ -1,6 +1,3 @@
-from bs4 import BeautifulSoup
-from bs4.element import Tag
-
 from pdfdrive_api.core.finder.models import (
     BookPanelModel,
     BooksCategoryModel,
