@@ -24,12 +24,10 @@ class BooksListing:
         section_items = []
 
         for section in books_section.find_all("div", {"class": "section"}):
-            if section.find("div", {"class": "pagination-wrap"}):
-                if current_page:
-                    return section
-                continue
+            if current_page:
+                return section
 
-            if not current_page:
+            if not section.find("div", {"class": "pagination-wrap"}):
                 section_items.append(section)
 
         return section_items
@@ -47,7 +45,7 @@ class BooksListing:
             title = link.get_text(strip=True)
             url = link.get("href")
 
-            cover_image = "https:" + book_panel.find("img").get("data-lazy-src")
+            cover_image = "https:" + book_panel.find_all("img")[-1].get("src")
 
             rate = (
                 book_panel.find("span", {"class": "stars"})
@@ -61,7 +59,9 @@ class BooksListing:
             book_items.append(book)
 
         if current_page:
-            page_navs = section.find("ul", {"class": "pagination"}).find_all("li")
+            page_navs = self.page_content.find(
+                "ul", {"class": "pagination"}
+            ).find_all("li")
 
             last_page_nav = page_navs[-1]
 
@@ -99,12 +99,16 @@ class ExtractorUtils(BooksListing):
         url = head.find("meta", dict(property="og:url")).get("content")
         image_soup = head.find("meta", dict(property="og:image"))
 
-        image = None
+        image = description = None
 
         if image_soup:
             image = image_soup.get("content")
 
-        description = head.find("meta", dict(name="description")).get("content")
+        description_soup = head.find("meta", dict(name="description"))
+
+        if description_soup:
+            description = description_soup.get("content")
+
         next_soup = head.find("meta", dict(rel="next"))
         next = None
 
@@ -147,17 +151,6 @@ class ExtractorUtils(BooksListing):
 
 
 class PageListingExtractor(ExtractorUtils):
-    def get_page_about(
-        self,
-    ) -> tuple[str, str]:
-        subheader = self.page_content.find("div", dict(id="subheader"))
-        subheader_container = subheader.find("div", {"class": "subcontainer"})
-
-        about = subheader_container.find("h1").get_text(strip=True)
-        sub_about = subheader_container.find("h2").get_text(strip=True)
-
-        return about, sub_about
-
     def get_book_search_placeholder(
         self,
     ) -> str:
@@ -190,15 +183,12 @@ class PageListingExtractor(ExtractorUtils):
     def extract_page_content(self) -> ContentPageModel:
         page_metadata = self.extract_page_metadata()
         books_category = self.extract_books_categories()
-        about, sub_about = self.get_page_about()
 
         search_placeholder = self.get_book_search_placeholder()
         current_page_books = self.current_page_books()
         other_books = self.other_books()
 
         return ContentPageModel(
-            about=about,
-            sub_about=sub_about,
             books_category=books_category,
             search_placeholder=search_placeholder,
             books=current_page_books,

@@ -1,19 +1,18 @@
 import pytest
 
-from pdfdrive_api.constants import BooksCategory
 from pdfdrive_api.core.finder.models import ContentPageModel
-from pdfdrive_api.main import CategoryPage
+from pdfdrive_api.main import URLPage
 
 
 @pytest.mark.asyncio
-async def test_category_page():
-    search = CategoryPage(BooksCategory.ACADEMIC_AND_EDUCATION.value)
+async def test_url_page():
+    search = URLPage("https://pdfdrive.com.co/tag/pdf-download/")
     contents = await search.get_content()
 
     assert isinstance(contents, ContentPageModel)
 
     next_page = await search.next_page(contents)
-    assert isinstance(next_page, CategoryPage)
+    assert isinstance(next_page, URLPage)
 
     next_contents = await next_page.get_content()
 
@@ -21,7 +20,7 @@ async def test_category_page():
 
     previous_page = await next_page.previous_page(next_contents)
 
-    assert isinstance(previous_page, CategoryPage)
+    assert isinstance(previous_page, URLPage)
 
     previous_contents = await previous_page.get_content()
 

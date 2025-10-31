@@ -7,6 +7,7 @@ from pdfdrive_api.core.finder.extractor import PageListingExtractor
 from pdfdrive_api.core.finder.models import ContentPageModel
 from pdfdrive_api.exceptions import NavigationError
 from pdfdrive_api.requests import Session
+from pdfdrive_api.utils import slugify
 
 
 class BasePage:
@@ -95,17 +96,23 @@ class SearchPage(BasePage):
 class CategoryPage(BasePage):
     def __init__(self, name: str, session: Session = Session()):
         super().__init__(session)
-        name_slug = name.lower().replace(" ", "-")
-        self.url = f"/category/{name_slug}"
+        self.url = f"/category/{slugify(name)}/"
+
+
+class TagPage(BasePage):
+    def __init__(self, url_or_name: str, session: Session = Session()):
+        self.url = (
+            f"/tag/{slugify(url_or_name)}/"
+            if not url_or_name.startswith("http")
+            else url_or_name
+        )
+        super().__init__(session)
 
 
 class URLPage(BasePage):
     def __init__(self, url: str, session: Session = Session()):
         self.url = url
         super().__init__(session)
-
-
-class TagPage(URLPage): ...
 
 
 class BookPage:

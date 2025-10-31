@@ -9,3 +9,7 @@ def souper(content: Html | HtmlSoup) -> HtmlSoup:
 
     soup = bts(content, "html.parser")
     return soup
+
+
+def slugify(tag: str) -> str:
+    return tag.lower().replace(" ", "-")

@@ -7,7 +7,7 @@ class PageMetadataModel(BaseModel):
     page_url: HttpUrl
     page_title: str
     page_image: HttpUrl | None
-    page_description: str
+    page_description: str | None
     page_next: HttpUrl | None = None
     page_schema: dict  # | None = None
 
@@ -42,8 +42,6 @@ class BooksCategoryModel(BaseModel):
 
 
 class ContentPageModel(BaseModel):
-    about: str
-    sub_about: str
     books_category: list[BooksCategoryModel]
     search_placeholder: str
     books: CurrentPageBooksModel

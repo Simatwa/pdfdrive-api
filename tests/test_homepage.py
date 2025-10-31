@@ -17,7 +17,7 @@ def test_book_listing_extraction():
 
 
 @pytest.mark.asyncio
-async def test_homepage_api():
+async def test_homepage():
     homepage = Homepage()
     contents = await homepage.get_content()
 
