@@ -65,7 +65,6 @@ class BooksListing:
             last_page_nav = page_navs[-1]
 
             if "next" in last_page_nav.get_text(strip=True).lower():
-                # print(len(page_navs))
                 current_page_nav = page_navs[0]
                 total_page_nav = page_navs[-2]
 
