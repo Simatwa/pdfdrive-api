@@ -1,4 +1,3 @@
-from copy import deepcopy
 from typing import Literal
 
 from pdfdrive_api.core.book.extractor import BookDetailsExtractor
