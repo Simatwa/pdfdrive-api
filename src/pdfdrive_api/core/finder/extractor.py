@@ -62,10 +62,11 @@ class BooksListing:
 
         if current_page:
             page_navs = section.find("ul", {"class": "pagination"}).find_all("li")
+
             last_page_nav = page_navs[-1]
 
             if "next" in last_page_nav.get_text(strip=True).lower():
-                current_page_nav = page_navs[0]
+                current_page_nav = page_navs[1]
                 total_page_nav = page_navs[-2]
 
             else:
@@ -74,6 +75,7 @@ class BooksListing:
             current_page = current_page_nav.get_text(strip=True)
 
             total_pages = total_page_nav.get_text(strip=True)
+
             return CurrentPageBooksModel(
                 name=name,
                 books=book_items,

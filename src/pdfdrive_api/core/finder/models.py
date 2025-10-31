@@ -50,7 +50,7 @@ class ContentPageModel(BaseModel):
     other_books: list[BooksGroupModel]
     metadata: PageMetadataModel
 
-    def get_page_path(page_number: int) -> str:
+    def get_page_path(self, page_number: int) -> str:
         return f"/page/{page_number}"
 
     @property

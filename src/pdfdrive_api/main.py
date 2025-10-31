@@ -47,8 +47,10 @@ class BasePage:
             raise NavigationError(
                 f"You have reached the {current_page_identity} page of the search"
             )
+        
+        # TODO: Fix this to replicate class instead of modifying existing one
 
-        next_base = deepcopy(self)
+        next_base = self  # deepcopy(self)
 
         current_url = next_base.url
 
@@ -69,14 +71,12 @@ class BasePage:
         return next_base
 
     async def next_page(self, current_page: ContentPageModel) -> BasePage:
-        next_page_path = current_page.next_page_path()
 
-        return self.__set_nav_basepage(next_page_path, "last")
+        return self.__set_nav_basepage(current_page.next_page_path, "last")
 
     async def previous_page(self, current_page: ContentPageModel) -> BasePage:
-        next_page_path = current_page.next_page_path()
 
-        return self.__set_nav_basepage(next_page_path, "first")
+        return self.__set_nav_basepage(current_page.next_page_path, "first")
 
 
 class Homepage(BasePage):
