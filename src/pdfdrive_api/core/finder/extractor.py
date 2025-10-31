@@ -1,3 +1,6 @@
+from bs4 import BeautifulSoup
+from bs4.element import Tag
+
 from pdfdrive_api.core.finder.models import (
     BookPanelModel,
     BooksCategoryModel,
@@ -17,18 +20,14 @@ class BooksListing:
     def get_books_sections(
         self, current_page: bool = False
     ) -> list[HtmlSoup] | HtmlSoup:
-        books_section = (
-            self.page_content.find("main", dict(id="main-site"))
-            .find("div", {"class": "container"})
-            .find("div", {"class": "sections"})
-        )
-
+        books_section = self.page_content.find("main", {"id": "main-site"})
         section_items = []
 
         for section in books_section.find_all("div", {"class": "section"}):
             if section.find("div", {"class": "pagination-wrap"}):
                 if current_page:
                     return section
+                continue
 
             if not current_page:
                 section_items.append(section)
@@ -178,24 +177,12 @@ class PageListingExtractor(ExtractorUtils):
     def other_books(
         self,
     ) -> list[BooksGroupModel]:
-        sections = self.get_books_sections(self.page_content)
+        sections = self.get_books_sections()
         books_group_items = []
 
-        for section in sections:
-            try:
-                out = section.find_all("div")
-                print(out)
-
-                # group_model = self.extract_books_section_details(section)
-                books_group_items.append(group_model)
-
-            except Exception as e:
-                raise
-                print(
-                    "Error",
-                )
-
-        print(len(books_group_items))
+        for index, section in enumerate(sections):
+            group_model = self.extract_books_section_details(section)
+            books_group_items.append(group_model)
 
         return books_group_items
 
