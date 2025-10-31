@@ -1,4 +1,5 @@
 import httpx
+from pydantic import HttpUrl
 
 from pdfdrive_api.constants import BASE_URL, REQUEST_HEADERS
 
@@ -13,6 +14,13 @@ class Session:
         )
 
     async def get(self, *args, **kwargs) -> httpx.Response:
+        if args:
+            args = list(args)
+            url = args[0]
+
+            if isinstance(url, HttpUrl):
+                args.replace(url, str(url))
+
         resp = await self.async_client.get(*args, **kwargs)
         resp.raise_for_status()
         return resp

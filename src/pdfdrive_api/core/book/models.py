@@ -3,6 +3,12 @@ from pydantic import BaseModel, HttpUrl
 from pdfdrive_api.core.finder.models import BookPanelModel, PageMetadataModel
 
 
+class DownloadBookPanelModel(BookPanelModel):
+    @property
+    def download_url(self) -> str:
+        return str(self.url)
+
+
 class BookAboutModel(BaseModel):
     description: str
     table_of_contents: list[str]
@@ -39,7 +45,7 @@ class BookTag(BaseModel):
 
 class BookPageModel(BaseModel):
     page_metadata: PageMetadataModel
-    book: BookPanelModel
+    book: DownloadBookPanelModel
     about: BookAboutModel
     metadata: MetadataModel
     tags: list[BookTag]

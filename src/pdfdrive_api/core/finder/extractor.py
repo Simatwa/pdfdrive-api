@@ -59,9 +59,17 @@ class BooksListing:
             book_items.append(book)
 
         if current_page:
-            page_navs = self.page_content.find(
-                "ul", {"class": "pagination"}
-            ).find_all("li")
+            pagination = self.page_content.find("ul", {"class": "pagination"})
+
+            if pagination is None:
+                return CurrentPageBooksModel(
+                    name=name,
+                    books=book_items,
+                    current_page=1,
+                    total_pages=1,
+                )
+
+            page_navs = pagination.find_all("li")
 
             last_page_nav = page_navs[-1]
 
