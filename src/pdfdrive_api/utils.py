@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup as bts
 from pdfdrive_api.types import Html, HtmlSoup
 
 
-def souper(content: Html | HtmlSoup) -> HtmlSoup:
+def souper(content: Html | HtmlSoup) -> bts:
     if isinstance(content, bts):
         return content
 

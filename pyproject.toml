@@ -1,7 +1,7 @@
 [project]
 name = "pdfdrive-api"
 version = "0.1.0"
-description = "Search and download ebooks from pdfdrive.com.co "
+description = "Search and download ebooks from pdfdrive.com.co"
 readme = "README.md"
 authors = [
     { name = "smartwa", email = "smartwacaleb@gmail.com" }

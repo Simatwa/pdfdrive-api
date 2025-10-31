@@ -1,7 +1,7 @@
 import pytest
 
 from pdfdrive_api.core.finder.models import ContentPageModel
-from pdfdrive_api.main import URLPage
+from pdfdrive_api.pages import URLPage
 
 
 @pytest.mark.asyncio

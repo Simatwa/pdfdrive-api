@@ -48,7 +48,7 @@ class BasePage:
                 f"You have reached the {current_page_identity} page of the search"
             )
 
-        # TODO: Fix this to replicate class instead of modifying existing one
+        # TODO: Fix this to duplicate class instead of modifying existing one
 
         next_base = self  # deepcopy(self)
 
@@ -77,7 +77,7 @@ class BasePage:
         return self.__set_nav_basepage(current_page.next_page_path, "first")
 
 
-class Homepage(BasePage):
+class HomePage(BasePage):
     """Landing page contents"""
 
 

@@ -2,7 +2,7 @@ import pytest
 
 from pdfdrive_api.core.finder.extractor import PageListingExtractor
 from pdfdrive_api.core.finder.models import ContentPageModel
-from pdfdrive_api.main import Homepage
+from pdfdrive_api.pages import HomePage
 from tests import index_path_content
 
 extractor = PageListingExtractor(index_path_content)
@@ -18,13 +18,13 @@ def test_book_listing_extraction():
 
 @pytest.mark.asyncio
 async def test_homepage():
-    homepage = Homepage()
+    homepage = HomePage()
     contents = await homepage.get_content()
 
     assert isinstance(contents, ContentPageModel)
 
     next_page = await homepage.next_page(contents)
-    assert isinstance(next_page, Homepage)
+    assert isinstance(next_page, HomePage)
 
     next_contents = await next_page.get_content()
 
@@ -32,7 +32,7 @@ async def test_homepage():
 
     previous_page = await next_page.previous_page(next_contents)
 
-    assert isinstance(previous_page, Homepage)
+    assert isinstance(previous_page, HomePage)
 
     previous_contents = await previous_page.get_content()
 

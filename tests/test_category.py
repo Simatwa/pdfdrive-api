@@ -2,7 +2,7 @@ import pytest
 
 from pdfdrive_api.constants import BooksCategory
 from pdfdrive_api.core.finder.models import ContentPageModel
-from pdfdrive_api.main import CategoryPage
+from pdfdrive_api.pages import CategoryPage
 
 
 @pytest.mark.asyncio
