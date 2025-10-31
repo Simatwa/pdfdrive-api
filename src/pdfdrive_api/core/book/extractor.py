@@ -1,9 +1,10 @@
 from functools import cache
 
+from pdfdrive_api.core.book.constants import name_short_map
 from pdfdrive_api.core.book.models import (
     BookAboutModel,
     BookPageModel,
-    BookPanelModel,
+    DownloadBookPanelModel,
     BookTag,
     MetadataModel,
     PageMetadataModel,
@@ -24,7 +25,7 @@ class BookDetailsExtractor:
         """NOTE: Caches response"""
         return ExtractorUtils(self.page_content).extract_page_metadata()
 
-    def extract_panel_details(self) -> BookPanelModel:
+    def extract_panel_details(self) -> DownloadBookPanelModel:
         page_metadata = self.extract_page_metadata()
 
         title = self.page_content.find("h1", {"class": "main-box-title"}).get_text(
@@ -41,7 +42,7 @@ class BookDetailsExtractor:
             .split(":")[1]
         )[:-1]
 
-        return BookPanelModel(
+        return DownloadBookPanelModel(
             title=title,
             url=url,
             cover_image=page_metadata.page_image,
@@ -65,29 +66,55 @@ class BookDetailsExtractor:
         )
 
     def extract_metadata(self) -> MetadataModel:
-        name_short_map = {"Name of PDF": "name", "No Pages": "total_pages"}
-
         table_soup = self.page_content.find("div", dict(id="descripcion")).find(
             "table"
         )
 
         table_rows = table_soup.find_all("tr")
-        amazon_link_row = table_rows[-1]
+        amazon_link_soup = table_rows[-1].find("a")
+        metadata_items = {}
 
-        metadata_items = {"amazon_link": amazon_link_row.find("a").get("href")}
+        if amazon_link_soup:
+            metadata_items.update({"amazon_link": amazon_link_soup.get("href")})
 
-        for row_soup in table_rows[:-1]:
-            table_header = row_soup.find("th").get_text(strip=True)
-            table_data = row_soup.find("td").get_text(strip=True)
+            for row_soup in table_rows[:-1]:
+                table_header = row_soup.find("th").get_text(strip=True)
+                table_data = row_soup.find("td").get_text(strip=True)
 
-            metadata_key = name_short_map.get(table_header, table_header.lower())
+                metadata_key = name_short_map.get(table_header, table_header.lower())
 
-            metadata_items[metadata_key] = table_data
+                metadata_items[metadata_key] = table_data
 
-        return MetadataModel(**metadata_items)
+            return MetadataModel(**metadata_items)
+
+        else:
+            for row_soup in table_rows:
+                ths = row_soup.find_all("th")
+
+                if not len(ths):
+                    ths = row_soup.find_all("td")
+
+                table_header = ths[0].get_text(strip=True)
+                table_data = ths[1].get_text(strip=True)
+
+                amazon_link_soup = ths[1].find(
+                    "a", {"rel": "noreferrer noopener sponsored"}
+                )
+
+                if amazon_link_soup:
+                    metadata_items["amazon_link"] = amazon_link_soup.get("href")
+
+                metadata_key = name_short_map.get(table_header, table_header.lower())
+
+                metadata_items[metadata_key] = table_data
+
+            return MetadataModel(**metadata_items)
 
     def extract_tags(self) -> list[BookTag]:
         tags_soup = self.page_content.find("div", dict(id="tags"))
+
+        if not tags_soup:
+            return []
 
         tag_items = []
 

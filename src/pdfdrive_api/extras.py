@@ -47,15 +47,12 @@ class BookDetails:
         self.session = session
         self.extractor: BookDetailsExtractor = None
 
-    async def _update_details(self, force: bool = False) -> None:
-        if self.extractor is not None and force is False:
-            return
-
+    async def _update_details(self, for_download: bool) -> None:
         contents = await self.session.get(
-            self.url, params=self.page_request_extra_params
+            self.url, params=(self.page_request_extra_params if for_download else {})
         )
         self.extractor = BookDetailsExtractor(contents)
 
-    async def get_details(self, force_update: bool = False) -> BookPageModel:
-        await self._update_details(force=force_update)
+    async def get_details(self, for_download: bool = False) -> BookPageModel:
+        await self._update_details(for_download)
         return self.extractor.extract_page_content()

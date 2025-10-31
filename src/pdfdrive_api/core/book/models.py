@@ -16,12 +16,13 @@ class BookAboutModel(BaseModel):
 
 
 class MetadataModel(BaseModel):
-    name: str
+    file_type: str | None = None
     total_pages: int
     author: str
     published: str
     language: str
     genres: str
+    source: str | None = None
     size: str
     amazon_link: HttpUrl
 
