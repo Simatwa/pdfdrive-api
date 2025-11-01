@@ -1,0 +1,102 @@
+from typing import Annotated
+
+from cyclopts import Group, Parameter, validators
+from cyclopts.types import _url_validator
+from rich import print
+from rich.prompt import Confirm
+
+from pdfdrive_api import CategoryPage, HomePage, TagPage, URLPage
+from pdfdrive_api.cli.commands.utils import display_page_results
+from pdfdrive_api.constants import BooksCategory
+
+UserChoiceGroup = Group(
+    name="search-criteria",
+    help="Declare the exploration criteria",
+    validator=validators.MutuallyExclusive(),
+    default_parameter=Parameter(show_default=True, negative="", required=True),
+)
+
+LimitControlGroup = Group(
+    name="limit-control",
+    help="Regulate the amount of pages to explore",
+    validator=validators.MutuallyExclusive(),
+    default_parameter=Parameter(show_default=True, negative="", required=False),
+)
+
+
+async def Explore(
+    category: Annotated[
+        BooksCategory | None,
+        Parameter(name=["--category", "-c"], group=UserChoiceGroup),
+    ] = None,
+    tag: Annotated[
+        str | None, Parameter(name=["--name", "-n"], group=UserChoiceGroup)
+    ] = None,
+    url: Annotated[
+        str | None,
+        Parameter(
+            name=["--url", "-u"], validator=_url_validator, group=UserChoiceGroup
+        ),
+    ] = None,
+    homepage: Annotated[
+        bool,
+        Parameter(name=["--homepage", "-home"], group=UserChoiceGroup),
+    ] = False,
+    limit: Annotated[
+        int,
+        Parameter(
+            name=["--limit", "-l"],
+            validator=validators.Number(gt=0),
+            group=LimitControlGroup,
+        ),
+    ] = 10,
+    offset: Annotated[
+        int, Parameter(name=["--offset", "-o"], validator=validators.Number(gte=0))
+    ] = 0,
+    infinity: Annotated[
+        bool, Parameter(name=["--infinity", "-i"], group=LimitControlGroup)
+    ] = False,
+    confirm: Annotated[bool, Parameter(name=["--confirm", "-c"])] = True,
+):
+    """Explore available ebooks by different criterias
+
+    Args:
+        category (Annotated[ BooksCategory  |  None, Parameter, optional): Explore books under specific category.
+        tag (Annotated[ str, Parameter, optional): Explore books having a particular tag.
+        url (Annotated[ str, Parameter, optional]): Page containing books listing to explore.
+        homepage(Annoated[ bool, Parameter, optional]): Explore landing page contents.
+        limit (Annotated[ int, Parameter, optional): Number of pages to visit.
+        offset (Annotated[ int, Parameter, optional): Page numner for starting exploration from.
+        infinity (Annotated[ bool, Parameter, optional): Explore books without page limit.
+        confirm (Annotated[bool, Parameter, optional): Ask for permission to navigate to next page.
+    """  # noqa: E501
+    if category:
+        target_page = CategoryPage(name=category.value, page_number=offset)
+
+    elif tag:
+        target_page = TagPage(tag, page_number=offset)
+
+    elif url:
+        target_page = URLPage(url, page_number=offset)
+
+    elif homepage:
+        target_page = HomePage(page_number=offset)
+
+    current_page_contents = await target_page.get_content()
+
+    while True:
+        display_page_results(current_page_contents)
+
+        if limit and current_page_contents.books.current_page == limit:
+            break
+
+        if confirm or infinity and not Confirm.ask("> [cyan]Continue[/cyan] ..."):
+            break
+
+        next_page = current_page_contents.books.current_page + 1
+
+        print(f">> [yellow]Loading next page ({next_page}) ...[/yellow]")
+
+        target_page = await target_page.next_page(current_page_contents)
+
+        current_page_contents = await target_page.get_content()

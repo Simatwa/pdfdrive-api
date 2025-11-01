@@ -33,19 +33,21 @@ def display_page_results(content_page: ContentPageModel):
 def choose_one_item(
     items: Iterable, prompt="> Enter item index (click enter to skip)"
 ) -> Any | None:
-    item_indexes = [""]
+    default_value = ""
+
+    item_indexes = [default_value]
 
     for index in range(len(items)):
         item_indexes.append(str(index))
 
-    item_index = Prompt.ask(prompt, choices=item_indexes)
+    item_index = Prompt.ask(prompt, choices=item_indexes, default=default_value)
 
     if item_index.isdigit():
         return items[int(item_index)]
 
     else:
         rich.print(
-            "\n>> Skipped (loading next page)...",
+            "\n[yellow]>> Skipped (loading next page)...[/yellow]",
             end="\r",
         )
 

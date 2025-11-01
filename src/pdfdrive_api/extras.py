@@ -3,7 +3,7 @@ from pdfdrive_api.core.book.models import BookPageModel
 from pdfdrive_api.models import ExtraRecommendedBook
 from pdfdrive_api.requests import Session
 from pdfdrive_api.types import Html
-from pdfdrive_api.utils import souper
+from pdfdrive_api.utils import souper, validate_book_page_url
 
 
 class BaseSession:
@@ -43,7 +43,7 @@ class BookDetails:
     page_request_extra_params = {"download": "links", "opt": "1"}
 
     def __init__(self, book_page_url: str, session: Session = Session()):
-        self.url = book_page_url
+        self.url = validate_book_page_url(book_page_url)
         self.session = session
         self.extractor: BookDetailsExtractor = None
 
@@ -56,3 +56,6 @@ class BookDetails:
     async def get_details(self, for_download: bool = False) -> BookPageModel:
         await self._update_details(for_download)
         return self.extractor.extract_page_content()
+
+    async def get_details_for_download(self) -> BookPageModel:
+        return await self.get_details(for_download=True)

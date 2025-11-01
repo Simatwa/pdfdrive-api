@@ -1,6 +1,5 @@
 # TODO: Complete this
-"""
-"""
+""" """
 
 from importlib import metadata
 
