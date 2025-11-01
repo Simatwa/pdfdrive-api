@@ -17,6 +17,11 @@ dependencies = [
 [project.scripts]
 pdfdrive-api = "pdfdrive_api:main"
 
+[project.optional-dependencies]
+cli = [
+    "cyclopts>=4.2.1",
+]
+
 [build-system]
 requires = ["uv_build>=0.8.15,<0.9.0"]
 build-backend = "uv_build"

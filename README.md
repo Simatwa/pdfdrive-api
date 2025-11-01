@@ -2,8 +2,7 @@
 
 # pdfdrive-api
 
-**Unofficial Python wrapper for pdfdrive.com.co**  
-Search and download ebooks from pdfdrive.com.co
+**Unofficial Python wrapper for pdfdrive.com.co** - Explore, search and download ebooks from pdfdrive.com.co
 
 [![PyPI version](https://badge.fury.io/py/pdfdrive-api.svg)](https://pypi.org/project/pdfdrive-api)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pdfdrive-api)](https://pypi.org/project/pdfdrive-api)
@@ -18,11 +17,12 @@ Search and download ebooks from pdfdrive.com.co
 
 - Search ebooks with optional filters ie. Tag, Category etc
 - Faster download speed
+- Fully asynchronous
 
 # Installation
 
 ```sh
-$ pip install pdfdrive-api
+$ uv pip install pdfdrive-api
 ```
 
 # Usage 
