@@ -1,4 +1,9 @@
-from throttlebuster import ThrottleBuster
+from throttlebuster import (
+    DownloadedFile,
+    DownloadMode,
+    DownloadTracker,
+    ThrottleBuster,
+)
 
 
 class Downloader(ThrottleBuster):

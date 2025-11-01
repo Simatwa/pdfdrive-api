@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Iterable
 from typing import Any
 
@@ -43,4 +44,40 @@ def choose_one_item(
         return items[int(item_index)]
 
     else:
-        rich.print("\n>> Skipped ...", end="\r",)
+        rich.print(
+            "\n>> Skipped (loading next page)...",
+            end="\r",
+        )
+
+
+def prepare_start(quiet: bool = False, verbose: int = 0) -> None:
+    """Set up some stuff for better CLI usage such as:
+
+    - Set higher logging level for some packages.
+    ...
+
+    """
+    if verbose > 3:
+        verbose = 2
+    logging.basicConfig(
+        format=(
+            "[%(asctime)s] : %(levelname)s - %(message)s"
+            if verbose
+            else "[%(module)s] %(message)s"
+        ),
+        datefmt="%d-%b-%Y %H:%M:%S",
+        level=(
+            logging.ERROR
+            if quiet
+            # just a hack to ensure
+            #           -v -> INFO
+            #           -vv -> DEBUG
+            else (30 - (verbose * 10))
+            if verbose > 0
+            else logging.INFO
+        ),
+    )
+    packages = ("httpx",)
+    for package_name in packages:
+        package_logger = logging.getLogger(package_name)
+        package_logger.setLevel(logging.WARNING)

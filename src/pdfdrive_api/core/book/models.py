@@ -17,14 +17,14 @@ class BookAboutModel(BaseModel):
 
 class MetadataModel(BaseModel):
     file_type: str | None = None
-    total_pages: int
-    author: str
-    published: str
-    language: str
-    genres: str
+    total_pages: int | None = None
+    author: str | None = None
+    published: str | None = None
+    language: str | None = None
+    genres: str | None = None
     source: str | None = None
-    size: str
-    amazon_link: HttpUrl
+    size: str | None = None
+    amazon_link: HttpUrl | None = None
 
 
 class RelatedBook(BaseModel):

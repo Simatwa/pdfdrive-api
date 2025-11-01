@@ -3,14 +3,18 @@ from typing import Annotated
 from cyclopts import Argument, Group, Parameter, validators
 
 from pdfdrive_api import SearchPage
-from pdfdrive_api.cli.commands.utils import choose_one_item, display_page_results
+from pdfdrive_api.cli.commands.utils import (
+    choose_one_item,
+    display_page_results,
+    prepare_start,
+)
 from pdfdrive_api.core.finder.models import BookPanelModel
 
 quiet_select_one_group = Group(
     name="prompt-control",
     help="Controls user interaction",
     validator=validators.MutuallyExclusive(),
-    # show_default=False - Showing "[default: False]" isn't too meaningful 
+    # show_default=False - Showing "[default: False]" isn't too meaningful
     # for mutually-exclusive options.
     # negative="" - Don't create a "--no-" flag
     default_parameter=Parameter(show_default=False, negative=""),
@@ -20,17 +24,39 @@ quiet_select_one_group = Group(
 async def Search(
     query: Annotated[str, Argument()],
     limit: Annotated[
-        int, Parameter(name=["--limit", "-l",], validator=validators.Number(gt=0))
+        int,
+        Parameter(
+            name=[
+                "--limit",
+                "-l",
+            ],
+            validator=validators.Number(gt=0),
+        ),
     ] = 1,
     select_one: Annotated[
         bool, Parameter(name=["--select-one", "-s"], group=quiet_select_one_group)
     ] = False,
-    yes: Annotated[bool, Parameter(name=["--yes", "-y",])] = False,
+    yes: Annotated[
+        bool,
+        Parameter(
+            name=[
+                "--yes",
+                "-y",
+            ]
+        ),
+    ] = False,
     quiet: Annotated[
-        bool, Parameter(name=["--quiet", "-q",], group=quiet_select_one_group)
+        bool,
+        Parameter(
+            name=[
+                "--quiet",
+                "-q",
+            ],
+            group=quiet_select_one_group,
+        ),
     ] = False,
 ) -> BookPanelModel | None:
-    """Search for a particular book
+    """Search for a particular book by its title
 
     Args:
         query (Annotated[str, Parameter, optional): Search text.
@@ -40,8 +66,9 @@ async def Search(
         quiet (Annotated[bool, Parameter, optional): Instead of prompting, proceed with book having same title as query.
 
     Returns:
-        BookPanelModel | None: _description_
-    """
+        BookPanelModel | None
+    """  # noqa: E501
+    prepare_start(quiet=quiet)
     search = SearchPage(query)
 
     for x in range(limit):
