@@ -1,4 +1,6 @@
-""" """
+# TODO: Complete this
+"""
+"""
 
 from importlib import metadata
 
@@ -26,7 +28,7 @@ from pdfdrive_api.pages import (
     URLPage,
 )
 
-__all__=[
+__all__ = [
     "BookDetailsExtractor",
     "BookPageModel",
     "PageListingExtractor",
@@ -39,5 +41,5 @@ __all__=[
     "HomePage",
     "SearchPage",
     "TagPage",
-    "URLPage"
+    "URLPage",
 ]
