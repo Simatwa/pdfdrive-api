@@ -1,6 +1,6 @@
 [project]
 name = "pdfdrive-api"
-version = "0.1.0"
+version = "0.1.1"
 description = "Search and download ebooks from pdfdrive.com.co"
 readme = "README.md"
 authors = [

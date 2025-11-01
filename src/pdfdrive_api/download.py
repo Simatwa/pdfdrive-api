@@ -8,3 +8,10 @@ from throttlebuster import (
 
 class Downloader(ThrottleBuster):
     """Pdf downloader"""
+
+
+__all__ = [
+    "DownloadedFile",
+    "DownloadMode",
+    "DownloadTracker",
+]
