@@ -27,7 +27,7 @@ class BasePage:
 
         current_url = self.url
 
-        page_path_pattern = re.compile(r"/page/\d+/?$")
+        page_path_pattern = re.compile(r".*(/page/\d+/?)$")
 
         if page_path_pattern.match(current_url):
             return page_path_pattern.sub(f"/page/{page_number}/", current_url)

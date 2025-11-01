@@ -20,11 +20,12 @@ class Extras(BaseSession):
         for entry in souper(content).find_all("li"):
             link = entry.find("a")
             img_soup = entry.find("img")
+            url = link.get("href")
 
             recommended_items.append(
                 ExtraRecommendedBook(
                     title=link.get_text(strip=True),
-                    url=link.get("href"),
+                    url=url,
                     cover_image=img_soup.get("src"),
                 )
             )
@@ -36,7 +37,7 @@ class Extras(BaseSession):
             self.recommend_path,
             data={"action": "ajax_searchbox", "searchtext": search_text},
         )
-        return self._extract_recommendations(resp.text)
+        return self._extract_recommendations(str(resp.json()))
 
 
 class BookDetails:
