@@ -5,7 +5,7 @@ from cyclopts.types import _url_validator
 from rich import print
 from rich.prompt import Confirm
 
-from pdfdrive_api import CategoryPage, HomePage, TagPage, URLPage
+from pdfdrive_api import CategoryPage, HomePage, SearchPage, TagPage, URLPage
 from pdfdrive_api.cli.commands.utils import display_page_results
 from pdfdrive_api.constants import BooksCategory
 
@@ -13,7 +13,6 @@ UserChoiceGroup = Group(
     name="search-criteria",
     help="Declare the exploration criteria",
     validator=validators.MutuallyExclusive(),
-    default_parameter=Parameter(show_default=True, negative="", required=True),
 )
 
 LimitControlGroup = Group(
@@ -25,6 +24,9 @@ LimitControlGroup = Group(
 
 
 async def Explore(
+    search: Annotated[
+        str | None, Parameter(name=["--search", "-s"], group=UserChoiceGroup)
+    ] = None,
     category: Annotated[
         BooksCategory | None,
         Parameter(name=["--category", "-c"], group=UserChoiceGroup),
@@ -40,8 +42,8 @@ async def Explore(
     ] = None,
     homepage: Annotated[
         bool,
-        Parameter(name=["--homepage", "-home"], group=UserChoiceGroup),
-    ] = False,
+        Parameter(name=["--homepage", "-home"], group=UserChoiceGroup, negative=""),
+    ] = True,
     limit: Annotated[
         int,
         Parameter(
@@ -51,8 +53,9 @@ async def Explore(
         ),
     ] = 10,
     offset: Annotated[
-        int, Parameter(name=["--offset", "-o"], validator=validators.Number(gte=0))
-    ] = 0,
+        int | None,
+        Parameter(name=["--offset", "-o"], validator=validators.Number(gte=0)),
+    ] = None,
     infinity: Annotated[
         bool, Parameter(name=["--infinity", "-i"], group=LimitControlGroup)
     ] = False,
@@ -61,8 +64,9 @@ async def Explore(
     """Explore available ebooks by different criterias
 
     Args:
+        search ( str, Parameter, optional): Explore books under a given search query
         category (Annotated[ BooksCategory  |  None, Parameter, optional): Explore books under specific category.
-        tag (Annotated[ str, Parameter, optional): Explore books having a particular tag.
+        tag (Annotated[ str, Parameter, optional): Explore books having a given particular tag.
         url (Annotated[ str, Parameter, optional]): Page containing books listing to explore.
         homepage(Annoated[ bool, Parameter, optional]): Explore landing page contents.
         limit (Annotated[ int, Parameter, optional): Number of pages to visit.
@@ -70,7 +74,11 @@ async def Explore(
         infinity (Annotated[ bool, Parameter, optional): Explore books without page limit.
         confirm (Annotated[bool, Parameter, optional): Ask for permission to navigate to next page.
     """  # noqa: E501
-    if category:
+
+    if search:
+        target_page = SearchPage(query=search, page_number=offset)
+
+    elif category:
         target_page = CategoryPage(name=category.value, page_number=offset)
 
     elif tag:
@@ -84,14 +92,19 @@ async def Explore(
 
     current_page_contents = await target_page.get_content()
 
+    if infinity:
+        limit = None
+
     while True:
         display_page_results(current_page_contents)
 
-        if limit and current_page_contents.books.current_page == limit:
+        if limit and current_page_contents.books.current_page >= limit:
             break
 
-        if confirm or infinity and not Confirm.ask("> [cyan]Continue[/cyan] ..."):
-            break
+        if confirm or infinity:
+            if not Confirm.ask(">> [yellow]Continue[/yellow] ...", default=infinity):
+                print("> Quitting")
+                break
 
         next_page = current_page_contents.books.current_page + 1
 
