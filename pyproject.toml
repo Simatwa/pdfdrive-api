@@ -15,7 +15,8 @@ dependencies = [
 ]
 
 [project.scripts]
-pdfdrive-api = "pdfdrive_api:main"
+pdfdrive = "pdfdrive_api.cli.app:app"
+pdfdrive-api = "pdfdrive_api.cli.app:app"
 
 [project.optional-dependencies]
 cli = [

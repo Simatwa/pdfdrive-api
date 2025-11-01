@@ -1,5 +1,7 @@
 from cyclopts import App
 
-app = App(
-    help="Explore, search and download ebooks from pdfdrive.com."
-)
+from pdfdrive_api.cli.commands.search import Search
+
+app = App(help="Explore, search and download ebooks from pdfdrive.com.")
+
+app.command(Search)
