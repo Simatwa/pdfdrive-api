@@ -31,10 +31,14 @@ class BookDetailsExtractor:
         title = self.page_content.find("h1", {"class": "main-box-title"}).get_text(
             strip=True
         )
+        url = None
 
-        url = self.page_content.find(
+        download_url_nav = self.page_content.find(
             "a", {"class": "buttond downloadAPK dapk_b"}
-        ).get("href")
+        )
+        
+        if download_url_nav is not None:
+            url = download_url_nav.get("href")
 
         rate = (
             self.page_content.find("span", {"class": "stars"})
@@ -78,12 +82,23 @@ class BookDetailsExtractor:
             metadata_items.update({"amazon_link": amazon_link_soup.get("href")})
 
             for row_soup in table_rows[:-1]:
-                table_header = row_soup.find("th").get_text(strip=True)
-                table_data = row_soup.find("td").get_text(strip=True)
+                try:
+                    # print(row_soup)
+                    table_header = row_soup.find("th").get_text(strip=True)
+                    table_data_soup = row_soup.find("td")
 
-                metadata_key = name_short_map.get(table_header, table_header.lower())
+                    if table_data_soup is not None:
+                        table_data = table_data_soup.get_text()
 
-                metadata_items[metadata_key] = table_data
+                    else:
+                        table_data = row_soup.find_all("th")[-1].get_text(strip=True)
+
+                    metadata_key = name_short_map.get(table_header, table_header.lower())
+
+                    metadata_items[metadata_key] = table_data
+                
+                except Exception:
+                    pass
 
             return MetadataModel(**metadata_items)
 

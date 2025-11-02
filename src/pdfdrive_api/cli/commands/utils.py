@@ -3,10 +3,12 @@ from collections.abc import Iterable
 from typing import Any
 
 import rich
+from rich.markdown import Markdown
 from rich.prompt import Prompt
 from rich.table import Table
 
 from pdfdrive_api import ContentPageModel
+from pdfdrive_api.core.book.models import BookPageModel
 
 
 def display_page_results(content_page: ContentPageModel):
@@ -28,6 +30,81 @@ def display_page_results(content_page: ContentPageModel):
         table.add_row(str(index), book.title, f"{book.rate}%", book.url)
 
     rich.print(table)
+
+
+def display_specific_book_details(book_details: BookPageModel):
+    d = book_details
+    details = (
+f"""
+<div align="center">
+
+# [{d.book.title}]({d.book.url}) *(Rate : {d.book.rate})*
+
+![Cover image]({d.book.cover_image})
+
+</div>
+
+## Metadata
+
+| Header | Details |
+|---------|---------|
+| Url     | {d.book.url} |
+| Author | {d.metadata.author} |
+| Language | {d.metadata.language} |
+| Published | {d.metadata.published} |
+| Genres | {d.metadata.genres} |
+| Number of pages | {d.metadata.total_pages} |
+| File type | {d.metadata.file_type} |
+| Size | {d.metadata.size} |
+| Amazon link | [{d.metadata.amazon_link}]({d.metadata.amazon_link}) |
+| Source | {d.metadata.source} |
+
+---
+
+## About
+
+### Short Description
+
+{d.about.description}
+
+### Table of Contents
+
+{'\n'.join(d.about.table_of_contents)}
+
+### Long Description
+
+{d.about.long_description}
+
+## Related Books
+
+| No. | Title | | Cover Image | Rate |
+| ---- | ----- | --- | -----  | ----- |
+{
+    ''.join(
+        [
+            f'| {no} | [{book.title}]({book.url}) | ![Cover image]({book.cover_image}) | {book.rate}%'
+            for no, book in enumerate(d.related)
+        ]
+    )
+}
+
+## Recommended Books
+
+| No.  | Title | Url |
+| ---- | ----- | ---- |
+{
+    ''.join(
+        [
+            f'| {no} | [{book.title}]({book.url}) | {book.url} |'
+            for no, book in enumerate(d.recommended)
+        ]
+    )
+}
+
+"""
+    )
+    
+    rich.print(Markdown(details))
 
 
 def choose_one_item(

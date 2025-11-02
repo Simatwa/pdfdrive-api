@@ -5,8 +5,19 @@ from cyclopts.types import _url_validator
 from rich import print
 from rich.prompt import Confirm
 
-from pdfdrive_api import CategoryPage, HomePage, SearchPage, TagPage, URLPage
-from pdfdrive_api.cli.commands.utils import display_page_results
+from pdfdrive_api import (
+    BookDetails,
+    CategoryPage,
+    HomePage,
+    SearchPage,
+    TagPage,
+    URLPage,
+)
+from pdfdrive_api.cli.commands.utils import (
+    choose_one_item,
+    display_page_results,
+    display_specific_book_details,
+)
 from pdfdrive_api.constants import BooksCategory
 
 UserChoiceGroup = Group(
@@ -60,6 +71,7 @@ async def Explore(
         bool, Parameter(name=["--infinity", "-i"], group=LimitControlGroup)
     ] = False,
     confirm: Annotated[bool, Parameter(name=["--confirm", "-c"])] = True,
+    details: Annotated[bool, Parameter(name=["--details", "-d"])] = True,
 ):
     """Explore available ebooks by different criterias
 
@@ -100,6 +112,13 @@ async def Explore(
 
         if limit and current_page_contents.books.current_page >= limit:
             break
+
+        if details:
+            target_book = choose_one_item(current_page_contents.books.books)
+
+            if target_book is not None:
+                book_details = await BookDetails(target_book.url).get_details_for_download()
+                display_specific_book_details(book_details)
 
         if confirm or infinity:
             if not Confirm.ask(">> [yellow]Continue[/yellow] ...", default=infinity):

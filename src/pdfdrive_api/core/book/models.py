@@ -4,6 +4,8 @@ from pdfdrive_api.core.finder.models import BookPanelModel, PageMetadataModel
 
 
 class DownloadBookPanelModel(BookPanelModel):
+    url: HttpUrl | None = None
+
     @property
     def download_url(self) -> str:
         return str(self.url)
@@ -29,9 +31,9 @@ class MetadataModel(BaseModel):
 
 class RelatedBook(BaseModel):
     title: str
-    cover_image: HttpUrl
+    cover_image: HttpUrl | str
     rate: int
-    url: HttpUrl
+    url: HttpUrl | str
 
 
 class RecommendedBook(BaseModel):
