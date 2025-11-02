@@ -23,8 +23,9 @@ def app():
         app_()
 
     except Exception as e:
-        if isinstance(e, NavigationError):
-            print(f">> Error : [yellow]{e}[/yellow]")
+        if isinstance(e, (NavigationError, Exception)):
+            print(f">> NOTE : [yellow]{e}[/yellow]")
+
         from sys import exit
 
         exit(1)
