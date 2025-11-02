@@ -95,9 +95,6 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-> [!NOTE]
-> There's more than just what you've gone through. Check out the CLI for a quick way to explore and download ebooks.
-
 </details>
 
 <details open>
