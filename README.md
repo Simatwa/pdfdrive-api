@@ -3,7 +3,6 @@
 # pdfdrive-api
 
 **Unofficial Python wrapper for [pdfdrive.com.co](https://pdfdrive.com.co)**
-Explore, search, and download ebooks programmatically or via CLI.
 
 [![PyPI version](https://badge.fury.io/py/pdfdrive-api.svg)](https://pypi.org/project/pdfdrive-api)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pdfdrive-api)](https://pypi.org/project/pdfdrive-api)
@@ -15,7 +14,7 @@ Explore, search, and download ebooks programmatically or via CLI.
 </div>
 
 
-#  Features
+##  Features
 
 * Search ebooks with optional filters (tag, category, etc.)
 * Explore books by categories or homepage
@@ -24,16 +23,16 @@ Explore, search, and download ebooks programmatically or via CLI.
 * Easy integration in scripts and applications
 
 
-#  Installation
+##  Installation
 
 ```bash
 uv pip install pdfdrive-api
 ```
 
 
-#  Python Usage
+##  Developer Usage
 
-##  Download by URL
+###  Download by URL
 
 ```python
 from pdfdrive_api import BookDetails, Downloader
@@ -64,7 +63,7 @@ if __name__ == "__main__":
 
 ---
 
-##  Search and Download
+###  Search and Download
 
 ```python
 from pdfdrive_api import BookDetails, Downloader, SearchPage
@@ -94,7 +93,7 @@ if __name__ == "__main__":
 > There's more than just what you've gone through. Check out the CLI for a quick way to explore and download ebooks.
 
 
-#  Command Line Interface (CLI)
+##  Command Line Interface (CLI)
 
 The package installs a CLI tool called `pdfdrive` for quick searching, exploring, and downloading ebooks.
 
@@ -117,7 +116,7 @@ Commands:
 
 ---
 
-##  `pdfdrive download`
+###  `pdfdrive download`
 
 ```bash
 pdfdrive download QUERY [ARGS]
@@ -150,9 +149,7 @@ pdfdrive download "https://pdfdrive.com.co/book/clean-code-pdf/"
 pdfdrive download "Deep Learning with Python" -d ~/Downloads -f deeplearning.pdf
 ```
 
----
-
-##  `pdfdrive explore`
+###  `pdfdrive explore`
 
 ```bash
 pdfdrive explore [ARGS]
@@ -194,9 +191,7 @@ pdfdrive explore -u "https://pdfdrive.com.co/category/academic-and-education"
 pdfdrive explore -i --no-confirm
 ```
 
----
-
-##  `pdfdrive search`
+###  `pdfdrive search`
 
 ```bash
 pdfdrive search QUERY [ARGS]
@@ -231,7 +226,7 @@ pdfdrive search "Atomic Habits" -q
 pdfdrive search "Artificial Intelligence" -l 3
 ```
 
-#  Summary
+###  Summary
 
 | Command             | Description                               |
 | ------------------- | ----------------------------------------- |
