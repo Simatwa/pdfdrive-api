@@ -72,7 +72,8 @@ class BasePage:
     ) -> "BasePage":
         if not target_page_path:
             raise NavigationError(
-                f"You have reached the {current_page_identity} page of the search"
+                f"You have reached the {current_page_identity} page of the "
+                "search results"
             )
 
         # TODO: Fix this to duplicate class instead of modifying existing one
