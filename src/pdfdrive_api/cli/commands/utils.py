@@ -62,13 +62,13 @@ def display_specific_book_details(book_details: BookPageModel):
 
 ## About
 
-### Short Description
-
-{d.about.description}
-
 ### Table of Contents
 
 {"\n\n".join(d.about.table_of_contents)}
+
+### Short Description
+
+{d.about.description}
 
 ### Long Description
 
@@ -81,7 +81,10 @@ def display_specific_book_details(book_details: BookPageModel):
 {
         "".join(
             [
-                f"| {no} | [{book.title}]({book.url}) | ![Cover image]({book.cover_image}) | {book.rate}%"
+                (
+                    f"| {no} | [{book.title}]({book.url}) | "
+                    f"![Cover image]({book.cover_image}) | {book.rate}%"
+                )
                 for no, book in enumerate(d.related, start=1)
             ]
         )
