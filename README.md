@@ -30,8 +30,13 @@
 uv pip install pdfdrive-api[cli]
 ```
 
+<details>
 
-##  Developer Usage
+<summary>
+
+## Developer Usage
+
+</summary>
 
 ###  Download by URL
 
@@ -93,6 +98,7 @@ if __name__ == "__main__":
 > [!NOTE]
 > There's more than just what you've gone through. Check out the CLI for a quick way to explore and download ebooks.
 
+</details>
 
 ##  Command Line Interface (CLI)
 
