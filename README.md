@@ -100,7 +100,13 @@ if __name__ == "__main__":
 
 </details>
 
+<details open>
+
+<summary>
+
 ##  Command Line Interface (CLI)
+
+</summary>
 
 The package installs a CLI tool called `pdfdrive` for quick searching, exploring, and downloading ebooks.
 
@@ -240,3 +246,5 @@ pdfdrive search "Artificial Intelligence" -l 3
 | `pdfdrive download` | Download an ebook by title or URL         |
 | `pdfdrive explore`  | Explore ebooks by category, tag, or query |
 | `pdfdrive search`   | Search for a particular book by title     |
+
+</details>
