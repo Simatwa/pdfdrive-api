@@ -195,13 +195,13 @@ pdfdrive explore
 pdfdrive explore -c business-and-career -l 5
 
 # Explore books tagged "machine learning"
-pdfdrive explore -n "machine learning"
+pdfdrive explore -t "machine learning"
 
 # Explore using URL
-pdfdrive explore -u "https://pdfdrive.com.co/category/academic-and-education"
+pdfdrive explore --u "https://pdfdrive.com.co/category/academic-and-education"
 
 # Infinite exploration, auto-advance
-pdfdrive explore -i --no-confirm
+pdfdrive explore -i
 ```
 
 ###  `pdfdrive search`

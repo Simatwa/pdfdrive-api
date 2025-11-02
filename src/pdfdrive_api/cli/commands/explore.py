@@ -43,7 +43,7 @@ async def Explore(
         Parameter(name=["--category", "-c"], group=UserChoiceGroup),
     ] = None,
     tag: Annotated[
-        str | None, Parameter(name=["--name", "-n"], group=UserChoiceGroup)
+        str | None, Parameter(name=["--tag", "-t"], group=UserChoiceGroup)
     ] = None,
     url: Annotated[
         str | None,
@@ -70,21 +70,22 @@ async def Explore(
     infinity: Annotated[
         bool, Parameter(name=["--infinity", "-i"], group=LimitControlGroup)
     ] = False,
-    confirm: Annotated[bool, Parameter(name=["--confirm", "-c"])] = True,
-    details: Annotated[bool, Parameter(name=["--details", "-d"])] = True,
+    confirm: Annotated[bool, Parameter(name=["--confirm", "-m"])] = False,
+    details: Annotated[bool, Parameter(name=["--details", "-d"])] = False,
 ):
     """Explore available ebooks by different criterias
 
     Args:
         search ( str, Parameter, optional): Explore books under a given search query
-        category (Annotated[ BooksCategory  |  None, Parameter, optional): Explore books under specific category.
-        tag (Annotated[ str, Parameter, optional): Explore books having a given particular tag.
-        url (Annotated[ str, Parameter, optional]): Page containing books listing to explore.
-        homepage(Annoated[ bool, Parameter, optional]): Explore landing page contents.
-        limit (Annotated[ int, Parameter, optional): Number of pages to visit.
-        offset (Annotated[ int, Parameter, optional): Page numner for starting exploration from.
-        infinity (Annotated[ bool, Parameter, optional): Explore books without page limit.
-        confirm (Annotated[bool, Parameter, optional): Ask for permission to navigate to next page.
+        category ( Annotated[ BooksCategory  |  None, Parameter, optional): Explore books under specific category.
+        tag ( Annotated[ str, Parameter, optional): Explore books having a given particular tag.
+        url ( Annotated[ str, Parameter, optional]): Page containing books listing to explore.
+        homepage( Annoated[ bool, Parameter, optional]): Explore landing page contents.
+        limit ( Annotated[ int, Parameter, optional): Number of pages to visit.
+        offset ( Annotated[ int, Parameter, optional): Page numner for starting exploration from.
+        infinity ( Annotated[ bool, Parameter, optional): Explore books without page limit.
+        confirm ( Annotated[bool, Parameter, optional): Ask for permission to navigate to next page.
+        details ( Annotated[bool, Parameter, optional): Ask for permission to show details of a particular book.
     """  # noqa: E501
 
     if search:
@@ -122,14 +123,23 @@ async def Explore(
                 book_details = await BookDetails(target_book.url).get_details()
                 display_specific_book_details(book_details)
 
-        if confirm or infinity:
+        if confirm:
             if not Confirm.ask(">> [yellow]Continue[/yellow] ...", default=infinity):
                 print("> Quitting")
                 break
 
         next_page = current_page_contents.books.current_page + 1
 
-        print(f">> [yellow]Loading next page ({next_page}) ...[/yellow]")
+        display_limit = (
+            limit
+            if limit and limit <= current_page_contents.books.total_pages
+            else current_page_contents.books.total_pages
+        )
+
+        print(
+            f">> [yellow]Loading next page ({next_page}/{display_limit}) ...[/yellow]",
+            end="\r",
+        )
 
         target_page = await target_page.next_page(current_page_contents)
 
