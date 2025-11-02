@@ -21,7 +21,7 @@ def display_page_results(content_page: ContentPageModel):
         show_lines=True,
     )
 
-    table.add_column("Index.", style="white", justify="center")
+    table.add_column("Index", style="white", justify="center")
     table.add_column("Title", style="cyan")
     table.add_column("Rate")
     table.add_column("Url")
