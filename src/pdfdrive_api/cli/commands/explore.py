@@ -117,9 +117,7 @@ async def Explore(
             target_book = choose_one_item(current_page_contents.books.books)
 
             if target_book is not None:
-                book_details = await BookDetails(
-                    target_book.url
-                ).get_details()
+                book_details = await BookDetails(target_book.url).get_details()
                 display_specific_book_details(book_details)
 
         if confirm or infinity:
