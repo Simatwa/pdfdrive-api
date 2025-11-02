@@ -1,7 +1,7 @@
 [project]
 name = "pdfdrive-api"
-version = "0.1.0"
-description = "Search and download ebooks from pdfdrive.com.co"
+version = "0.1.1"
+description = "Explore, search, and download ebooks programmatically or via CLI"
 readme = "README.md"
 authors = [
     { name = "smartwa", email = "smartwacaleb@gmail.com" }
@@ -23,11 +23,17 @@ dependencies = [
     "bs4>=0.0.2",
     "httpx>=0.28.1",
     "pydantic>=2.12.3",
-    "throttlebuster>=0.1.10",
+    "throttlebuster>=0.1.11",
 ]
 
 [project.scripts]
-pdfdrive-api = "pdfdrive_api:main"
+pdfdrive = "pdfdrive_api.cli.app:app"
+pdfdrive-api = "pdfdrive_api.cli.app:app"
+
+[project.optional-dependencies]
+cli = [
+    "cyclopts>=4.2.1",
+]
 
 [build-system]
 requires = ["uv_build>=0.8.15,<0.9.0"]
@@ -47,7 +53,7 @@ select = [
 ]
 ignore = [
     "UP031",  # https://docs.astral.sh/ruff/rules/printf-string-formatting/
-    "F401"    # https://docs.astral.sh/ruff/rules/unused-import
+    # "F401"    # https://docs.astral.sh/ruff/rules/unused-import
 ]
 
 [tool.ruff.lint.isort]

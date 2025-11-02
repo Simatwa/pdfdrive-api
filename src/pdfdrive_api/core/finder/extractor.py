@@ -70,8 +70,11 @@ class BooksListing:
 
             last_page_nav = page_navs[-1]
 
+            current_page_nav = pagination.find(
+                "span", {"class": "page-numbers current"}
+            )
+
             if "next" in last_page_nav.get_text(strip=True).lower():
-                current_page_nav = page_navs[1]
                 total_page_nav = page_navs[-2]
 
             else:
@@ -84,8 +87,8 @@ class BooksListing:
             return CurrentPageBooksModel(
                 name=name,
                 books=book_items,
-                current_page=int(current_page),
-                total_pages=int(total_pages),
+                current_page=current_page,
+                total_pages=total_pages,
             )
 
         books_group = BooksGroupModel(name=name, books=book_items)

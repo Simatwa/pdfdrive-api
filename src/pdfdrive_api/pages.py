@@ -1,3 +1,4 @@
+import re
 from typing import Literal
 
 from pdfdrive_api.core.book.extractor import BookDetailsExtractor
@@ -6,7 +7,7 @@ from pdfdrive_api.core.finder.extractor import PageListingExtractor
 from pdfdrive_api.core.finder.models import ContentPageModel
 from pdfdrive_api.exceptions import NavigationError
 from pdfdrive_api.requests import Session
-from pdfdrive_api.utils import slugify
+from pdfdrive_api.utils import is_url, slugify, validate_book_page_url
 
 
 class BasePage:
@@ -14,9 +15,28 @@ class BasePage:
 
     url: str = ""
 
-    def __init__(self, session: Session = Session()):
+    def __init__(self, page_number: int = None, session: Session = Session()):
+        new_url = self._form_url_for_page(page_number)
+        self.url = new_url
         self.session = session
         self.extractor: PageListingExtractor = None
+
+    def _form_url_for_page(self, page_number: int | None) -> str:
+        if page_number is None:
+            return self.url
+
+        current_url = self.url
+
+        page_path_pattern = re.compile(r".*(/page/\d+/?)$")
+
+        if page_path_pattern.match(current_url):
+            return page_path_pattern.sub(f"/page/{page_number}/", current_url)
+
+        else:
+            return (
+                current_url
+                + f"{'' if current_url.endswith('/') else '/'}page/{page_number}/"
+            )
 
     def get_requests_params(self) -> dict:
         """Override this in subclass"""
@@ -26,6 +46,7 @@ class BasePage:
         if if_none and self.extractor is not None:
             return
 
+        # print(self.url)
         resp = await self.session.get(self.url, params=self.get_requests_params())
         self.extractor = PageListingExtractor(resp.text)
 
@@ -41,7 +62,10 @@ class BasePage:
         return self.extractor.extract_page_content()
 
     def __set_nav_basepage(
-        self, target_page_path: str, current_page_identity: Literal["last", "first"]
+        self,
+        target_page_number: int,
+        target_page_path: str,
+        current_page_identity: Literal["last", "first"],
     ) -> BasePage:
         if not target_page_path:
             raise NavigationError(
@@ -52,29 +76,22 @@ class BasePage:
 
         next_base = self  # deepcopy(self)
 
-        current_url = next_base.url
-
-        new_url = None
-
-        if "/page/" in current_url:
-            new_url = (
-                current_url[: -2 if current_url.endswith("/") else -1]
-                + target_page_path[-2 if target_page_path.endswith("/") else -1]
-            )
-
-        else:
-            new_url = current_url + target_page_path
-
-        next_base.url = new_url + "/"
+        next_base.url = self._form_url_for_page(target_page_number)
         next_base.extractor = None
 
         return next_base
 
     async def next_page(self, current_page: ContentPageModel) -> BasePage:
-        return self.__set_nav_basepage(current_page.next_page_path, "last")
+        return self.__set_nav_basepage(
+            current_page.books.current_page + 1, current_page.next_page_path, "last"
+        )
 
     async def previous_page(self, current_page: ContentPageModel) -> BasePage:
-        return self.__set_nav_basepage(current_page.next_page_path, "first")
+        return self.__set_nav_basepage(
+            current_page.books.current_page - 1,
+            current_page.previous_page_path,
+            "first",
+        )
 
 
 class HomePage(BasePage):
@@ -84,8 +101,10 @@ class HomePage(BasePage):
 class SearchPage(BasePage):
     """Provide book search functionality"""
 
-    def __init__(self, query: str, session: Session = Session()):
-        super().__init__(session)
+    def __init__(
+        self, query: str, page_number: int = None, session: Session = Session()
+    ):
+        super().__init__(page_number, session)
         self.query = query
 
     def get_requests_params(self):
@@ -93,32 +112,38 @@ class SearchPage(BasePage):
 
 
 class CategoryPage(BasePage):
-    def __init__(self, name: str, session: Session = Session()):
-        super().__init__(session)
+    def __init__(
+        self, name: str, page_number: int = None, session: Session = Session()
+    ):
         self.url = f"/category/{slugify(name)}/"
+        super().__init__(page_number, session)
 
 
 class TagPage(BasePage):
-    def __init__(self, url_or_name: str, session: Session = Session()):
+    def __init__(
+        self, url_or_name: str, page_number: int = None, session: Session = Session()
+    ):
         self.url = (
             f"/tag/{slugify(url_or_name)}/"
-            if not url_or_name.startswith("http")
+            if not is_url(url_or_name)
             else url_or_name
         )
-        super().__init__(session)
+        super().__init__(page_number, session)
 
 
 class URLPage(BasePage):
-    def __init__(self, url: str, session: Session = Session()):
+    def __init__(
+        self, url: str, page_number: int = None, session: Session = Session()
+    ):
         self.url = url
-        super().__init__(session)
+        super().__init__(page_number, session)
 
 
 class BookPage:
     """Specific book page details"""
 
     def __init__(self, url: str, session: Session = Session()):
-        self.url = url
+        self.url = validate_book_page_url(url)
         self.session = session
         self.extractor: BookDetailsExtractor = None
 

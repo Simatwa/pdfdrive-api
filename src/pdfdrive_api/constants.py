@@ -1,6 +1,9 @@
+import re
 from enum import StrEnum
 
 BASE_URL = "https://pdfdrive.com.co/"
+
+BOOK_PAGE_URL_PATTERN = re.compile(BASE_URL + r"[\w-]+", re.IGNORECASE)
 
 REQUEST_HEADERS = {
     "Accept": "*/*",

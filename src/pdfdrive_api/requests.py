@@ -9,6 +9,8 @@ class Session:
 
     def __init__(self, base_url: str = BASE_URL, **httpx_client_kwargs):
         httpx_client_kwargs.setdefault("headers", REQUEST_HEADERS)
+        httpx_client_kwargs.setdefault("follow_redirects", True)
+
         self.async_client = httpx.AsyncClient(
             base_url=base_url, **httpx_client_kwargs
         )
