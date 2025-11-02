@@ -4,6 +4,7 @@
 
 **Unofficial Python wrapper for [pdfdrive.com.co](https://pdfdrive.com.co)**
 
+
 [![PyPI version](https://badge.fury.io/py/pdfdrive-api.svg)](https://pypi.org/project/pdfdrive-api)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pdfdrive-api)](https://pypi.org/project/pdfdrive-api)
 ![Coverage](https://raw.githubusercontent.com/Simatwa/pdfdrive-api/refs/heads/main/assets/coverage.svg)
@@ -127,7 +128,7 @@ Download an ebook by title or by its page URL.
 | Parameter       | Aliases   | Description                                               | Default                      |
 | --------------- | --------- | --------------------------------------------------------- | ---------------------------- |
 | `QUERY`         | `--query` | Search text or book page URL.                             | **Required**                 |
-| `--dir`         | `-d`      | Directory to save downloaded files.                       | `~/git/smartwa/pdfdrive-api` |
+| `--dir`         | `-d`      | Directory to save downloaded files.                       | `[current working directory]` |
 | `--filename`    | `-f`      | Custom filename for output file.                          | Auto-generated               |
 | `--connections` |           | Number of parallel download connections.                  | `5`                          |
 | `--yes`, `-y`   |           | Proceed with the first search result automatically.       | `False`                      |
