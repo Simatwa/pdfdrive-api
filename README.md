@@ -27,7 +27,7 @@
 ##  Installation
 
 ```bash
-uv pip install pdfdrive-api[cli]
+$ uv pip install "pdfdrive-api[cli]"
 ```
 
 <details>
