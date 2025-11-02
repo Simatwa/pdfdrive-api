@@ -4,7 +4,6 @@ from rich import print
 from pdfdrive_api.cli.commands.download import Download
 from pdfdrive_api.cli.commands.explore import Explore
 from pdfdrive_api.cli.commands.search import Search
-from pdfdrive_api.exceptions import NavigationError
 
 app_ = App(
     help="Explore, search and download ebooks from [cyan]pdfdrive.com.co[/cyan]",
@@ -23,8 +22,7 @@ def app():
         app_()
 
     except Exception as e:
-        if isinstance(e, (NavigationError, Exception)):
-            print(f">> NOTE : [yellow]{e}[/yellow]")
+        print(f">> ({e.__class__.__name__}): [yellow]{e}[/yellow]")
 
         from sys import exit
 
