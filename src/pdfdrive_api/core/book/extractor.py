@@ -36,7 +36,7 @@ class BookDetailsExtractor:
         download_url_nav = self.page_content.find(
             "a", {"class": "buttond downloadAPK dapk_b"}
         )
-        
+
         if download_url_nav is not None:
             url = download_url_nav.get("href")
 
@@ -93,10 +93,12 @@ class BookDetailsExtractor:
                     else:
                         table_data = row_soup.find_all("th")[-1].get_text(strip=True)
 
-                    metadata_key = name_short_map.get(table_header, table_header.lower())
+                    metadata_key = name_short_map.get(
+                        table_header, table_header.lower()
+                    )
 
                     metadata_items[metadata_key] = table_data
-                
+
                 except Exception:
                     pass
 

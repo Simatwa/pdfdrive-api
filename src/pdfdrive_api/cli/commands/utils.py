@@ -34,8 +34,7 @@ def display_page_results(content_page: ContentPageModel):
 
 def display_specific_book_details(book_details: BookPageModel):
     d = book_details
-    details = (
-f"""
+    details = f"""
 <div align="center">
 
 # [{d.book.title}]({d.book.url}) *(Rate : {d.book.rate})*
@@ -69,7 +68,7 @@ f"""
 
 ### Table of Contents
 
-{'\n'.join(d.about.table_of_contents)}
+{"\n\n".join(d.about.table_of_contents)}
 
 ### Long Description
 
@@ -80,30 +79,29 @@ f"""
 | No. | Title | | Cover Image | Rate |
 | ---- | ----- | --- | -----  | ----- |
 {
-    ''.join(
-        [
-            f'| {no} | [{book.title}]({book.url}) | ![Cover image]({book.cover_image}) | {book.rate}%'
-            for no, book in enumerate(d.related)
-        ]
-    )
-}
+        "".join(
+            [
+                f"| {no} | [{book.title}]({book.url}) | ![Cover image]({book.cover_image}) | {book.rate}%"
+                for no, book in enumerate(d.related, start=1)
+            ]
+        )
+    }
 
 ## Recommended Books
 
 | No.  | Title | Url |
 | ---- | ----- | ---- |
 {
-    ''.join(
-        [
-            f'| {no} | [{book.title}]({book.url}) | {book.url} |'
-            for no, book in enumerate(d.recommended)
-        ]
-    )
-}
+        "".join(
+            [
+                f"| {no} | [{book.title}]({book.url}) | {book.url} |"
+                for no, book in enumerate(d.recommended, start=1)
+            ]
+        )
+    }
 
 """
-    )
-    
+
     rich.print(Markdown(details))
 
 
