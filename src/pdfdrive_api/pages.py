@@ -27,10 +27,13 @@ class BasePage:
 
         current_url = self.url
 
-        page_path_pattern = re.compile(r".*(/page/\d+/?)$")
+        page_path_pattern = re.compile(r".*(?P<page_path>/page/\d+/?$)")
+        page_path_match = page_path_pattern.match(current_url)
 
-        if page_path_pattern.match(current_url):
-            return page_path_pattern.sub(f"/page/{page_number}/", current_url)
+        if page_path_match is not None:
+            page_path_ = page_path_match.groupdict()["page_path"]
+
+            return re.sub(page_path_ + r"$", f"/page/{page_number}/", current_url)
 
         else:
             return (
@@ -66,7 +69,7 @@ class BasePage:
         target_page_number: int,
         target_page_path: str,
         current_page_identity: Literal["last", "first"],
-    ) -> BasePage:
+    ) -> "BasePage":
         if not target_page_path:
             raise NavigationError(
                 f"You have reached the {current_page_identity} page of the search"
@@ -81,12 +84,12 @@ class BasePage:
 
         return next_base
 
-    async def next_page(self, current_page: ContentPageModel) -> BasePage:
+    async def next_page(self, current_page: ContentPageModel) -> "BasePage":
         return self.__set_nav_basepage(
             current_page.books.current_page + 1, current_page.next_page_path, "last"
         )
 
-    async def previous_page(self, current_page: ContentPageModel) -> BasePage:
+    async def previous_page(self, current_page: ContentPageModel) -> "BasePage":
         return self.__set_nav_basepage(
             current_page.books.current_page - 1,
             current_page.previous_page_path,
