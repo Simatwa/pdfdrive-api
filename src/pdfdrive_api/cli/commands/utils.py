@@ -64,13 +64,13 @@ def display_specific_book_details(book_details: BookPageModel):
 
 ---
 
-# Table of Contents
-
-{nn.join(d.about.table_of_contents)}
-
 # Short Description
 
 {d.about.description}
+
+# Table of Contents
+
+{nn.join(d.about.table_of_contents)}
 
 # Long Description
 
