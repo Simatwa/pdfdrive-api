@@ -66,15 +66,15 @@ def display_specific_book_details(book_details: BookPageModel):
 
 # Table of Contents
 
-{ nn.join(d.about.table_of_contents)}
+{nn.join(d.about.table_of_contents)}
 
 # Short Description
 
-{remove_tags(d.about.description or '', nn)}
+{remove_tags(d.about.description or "", nn)}
 
 # Long Description
 
-{remove_tags(d.about.long_description or '', nn)}
+{remove_tags(d.about.long_description or "", nn)}
 
 # Related Books
 

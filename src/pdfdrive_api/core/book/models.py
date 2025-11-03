@@ -1,4 +1,4 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, field_validator
 
 from pdfdrive_api.core.finder.models import BookPanelModel, PageMetadataModel
 
@@ -27,6 +27,13 @@ class MetadataModel(BaseModel):
     source: str | None = None
     size: str | None = None
     amazon_link: HttpUrl | None = None
+
+    @field_validator("language")
+    def validate_language(value):
+        if value.lower().strip() == "enlgish":
+            return "English"
+        
+        return value
 
 
 class RelatedBook(BaseModel):
