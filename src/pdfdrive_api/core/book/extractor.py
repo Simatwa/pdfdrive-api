@@ -1,8 +1,10 @@
+import re
 from functools import cache
 
 from pdfdrive_api.core.book.constants import name_short_map
 from pdfdrive_api.core.book.models import (
     BookAboutModel,
+    BookFAQ,
     BookPageModel,
     BookTag,
     DownloadBookPanelModel,
@@ -56,17 +58,40 @@ class BookDetailsExtractor:
     def extract_about(self) -> BookAboutModel:
         main = self.page_content.find("main", {"id": "main-site"})
         table_of_contents_soup = main.find("div", dict(id="rank-math-toc"))
-        description = str(main.find("div", {"class": "entry-limit"}))
+        description = re.sub(
+            r"\s{2,}",
+            " ",
+            (
+                main.find("div", {"class": "entry-limit"})
+                .find("p")
+                .get_text()  # (strip=True)
+            ),
+        ).strip()
+
         table_of_content_items = [
             item.get_text(strip=True)
-            for item in table_of_contents_soup.find_all("li")
+            for item in table_of_contents_soup.find_all("li")[:-1]
+            if not re.match(r"#faq?-", item.find("a").get("href"))
         ]
         long_description = str(main.find("div", {"id": "descripcion"}))
+
+        faq_soup = main.find("div", {"id": "rank-math-faq"})
+        faq_items = []
+
+        for entry in faq_soup.find_all("div", {"class": "rank-math-list-item"}):
+            question = entry.find("h3", {"class": "rank-math-question"}).get_text(
+                strip=True
+            )
+            answer = entry.find("div", {"class": "rank-math-answer"}).get_text(
+                strip=True
+            )
+            faq_items.append(BookFAQ(question=question, answer=answer))
 
         return BookAboutModel(
             description=description,
             table_of_contents=table_of_content_items,
             long_description=long_description,
+            faqs=faq_items,
         )
 
     def extract_metadata(self) -> MetadataModel:

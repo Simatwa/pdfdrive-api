@@ -11,10 +11,16 @@ class DownloadBookPanelModel(BookPanelModel):
         return str(self.url)
 
 
+class BookFAQ(BaseModel):
+    question: str
+    answer: str
+
+
 class BookAboutModel(BaseModel):
     description: str
     table_of_contents: list[str]
     long_description: str
+    faqs: list[BookFAQ]
 
 
 class MetadataModel(BaseModel):
@@ -29,10 +35,10 @@ class MetadataModel(BaseModel):
     amazon_link: HttpUrl | None = None
 
     @field_validator("language")
-    def validate_language(value):
-        if value.lower().strip() == "enlgish":
+    def validate_language(value: str | None):
+        if value and value.lower().strip() == "enlgish":
             return "English"
-        
+
         return value
 
 

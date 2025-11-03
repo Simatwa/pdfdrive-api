@@ -70,11 +70,22 @@ def display_specific_book_details(book_details: BookPageModel):
 
 # Short Description
 
-{remove_tags(d.about.description or "", nn)}
+{d.about.description}
 
 # Long Description
 
 {remove_tags(d.about.long_description or "", nn)}
+
+# FAQS
+
+{
+        nn.join(
+            [
+                f"{count}. {f.question}{nn}{f.answer}"
+                for count, f in enumerate(d.about.faqs, start=1)
+            ]
+        )
+    }
 
 # Related Books
 
