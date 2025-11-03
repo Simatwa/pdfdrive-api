@@ -9,6 +9,7 @@ from rich.table import Table
 
 from pdfdrive_api import ContentPageModel
 from pdfdrive_api.core.book.models import BookPageModel
+from pdfdrive_api.utils import remove_tags
 
 
 def display_page_results(content_page: ContentPageModel):
@@ -34,6 +35,9 @@ def display_page_results(content_page: ContentPageModel):
 
 def display_specific_book_details(book_details: BookPageModel):
     d = book_details
+    n = "\n"
+    nn = n * 2
+
     details = f"""
 <div align="center">
 
@@ -43,7 +47,7 @@ def display_specific_book_details(book_details: BookPageModel):
 
 </div>
 
-## Metadata
+# Metadata
 
 | Header | Details |
 |---------|---------|
@@ -60,21 +64,19 @@ def display_specific_book_details(book_details: BookPageModel):
 
 ---
 
-## About
+# Table of Contents
 
-### Table of Contents
+{ nn.join(d.about.table_of_contents)}
 
-{"\n\n".join(d.about.table_of_contents)}
+# Short Description
 
-### Short Description
+{remove_tags(d.about.description or '', nn)}
 
-{d.about.description}
+# Long Description
 
-### Long Description
+{remove_tags(d.about.long_description or '', nn)}
 
-{d.about.long_description}
-
-## Related Books
+# Related Books
 
 | No. | Title | | Cover Image | Rate |
 | ---- | ----- | --- | -----  | ----- |
@@ -90,7 +92,7 @@ def display_specific_book_details(book_details: BookPageModel):
         )
     }
 
-## Recommended Books
+# Recommended Books
 
 | No.  | Title | Url |
 | ---- | ----- | ---- |

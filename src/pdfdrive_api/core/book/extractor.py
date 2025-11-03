@@ -56,7 +56,7 @@ class BookDetailsExtractor:
     def extract_about(self) -> BookAboutModel:
         main = self.page_content.find("main", {"id": "main-site"})
         table_of_contents_soup = main.find("div", dict(id="rank-math-toc"))
-        description = main.find("div", {"class": "entry-limit"}).get_text(strip=True)
+        description = str(main.find("div", {"class": "entry-limit"}))
         table_of_content_items = [
             item.get_text(strip=True)
             for item in table_of_contents_soup.find_all("li")

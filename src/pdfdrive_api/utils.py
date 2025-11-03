@@ -34,3 +34,11 @@ def validate_book_page_url(book_page_url: str) -> str:
             f"Invalid value for specific book page url - {book_page_url}"
         )
     return book_page_url
+
+
+def remove_tags(html: str, replace_with: str = "") -> str:
+    return re.sub(r"<[^>]*>", replace_with, html)
+
+
+def remove_tag_attributes(html: str) -> str:
+    return re.sub(r"<(\w+)(?:\s+[^>]*)?>", r"<\1>", html)
